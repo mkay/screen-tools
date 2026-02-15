@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="screen-tools">
+		<_short>Screen Tools</_short>
+		<_long>Screen crosshair guides, pixel measurement, and color picker</_long>
+		<category>Utility</category>
+
+		<group>
+			<_short>Crosshair</_short>
+
+			<option name="toggle" type="activator">
+				<_short>Toggle Guides</_short>
+				<_long>Toggle alignment guides on/off</_long>
+				<default>&lt;ctrl&gt; KEY_F1</default>
+			</option>
+
+			<option name="cancel" type="activator">
+				<_short>Cancel</_short>
+				<_long>Cancel active measurement or color picker</_long>
+				<default>KEY_ESC</default>
+			</option>
+
+			<option name="freeze" type="button">
+				<_short>Freeze Position</_short>
+				<_long>Freeze guide position at current cursor location</_long>
+				<default>&lt;ctrl&gt; BTN_LEFT</default>
+			</option>
+
+			<option name="line_width" type="int">
+				<_short>Line Width</_short>
+				<_long>Line width of alignment guides</_long>
+				<default>1</default>
+				<min>1</min>
+				<max>10</max>
+			</option>
+
+			<option name="line_color" type="color">
+				<_short>Line Color</_short>
+				<_long>Color used for rendering alignment guides</_long>
+				<default>1 0 0 0.8</default>
+			</option>
+		</group>
+
+		<group>
+			<_short>Measure</_short>
+
+			<option name="measure" type="button">
+				<_short>Measure</_short>
+				<_long>Click to measure pixel distances on screen</_long>
+				<default>&lt;super&gt; BTN_LEFT</default>
+			</option>
+
+			<option name="measure_color" type="color">
+				<_short>Measure Color</_short>
+				<_long>Color used for measurement rectangle outline</_long>
+				<default>0 0.75 1 0.8</default>
+			</option>
+
+			<option name="measure_font_size" type="int">
+				<_short>Measure Font Size</_short>
+				<_long>Font size for measurement label</_long>
+				<default>14</default>
+				<min>8</min>
+				<max>36</max>
+			</option>
+
+			<option name="crosshair_measure_opacity" type="int">
+				<_short>Crosshair Opacity While Measuring</_short>
+				<_long>Opacity of crosshair lines while actively measuring (0 = hidden, 100 = fully visible)</_long>
+				<default>20</default>
+				<min>0</min>
+				<max>100</max>
+			</option>
+		</group>
+
+		<group>
+			<_short>Color Picker</_short>
+
+			<option name="picker" type="button">
+				<_short>Pick Color</_short>
+				<_long>Toggle color picker mode and copy color to clipboard (requires guides active)</_long>
+				<default>&lt;super&gt; BTN_RIGHT</default>
+			</option>
+
+			<option name="picker_format" type="string">
+				<_short>Color Format</_short>
+				<_long>Format used when copying the picked color to the clipboard</_long>
+				<default>hex</default>
+				<desc>
+					<value>hex</value>
+					<_name>Hex (#RRGGBB)</_name>
+				</desc>
+				<desc>
+					<value>rgb</value>
+					<_name>RGB (rgb(R, G, B))</_name>
+				</desc>
+				<desc>
+					<value>hsl</value>
+					<_name>HSL (hsl(H, S%, L%))</_name>
+				</desc>
+				<desc>
+					<value>oklch</value>
+					<_name>OKLCH (oklch(L C H))</_name>
+				</desc>
+			</option>
+
+			<option name="picker_loupe_radius" type="int">
+				<_short>Loupe Radius</_short>
+				<_long>Capture radius around cursor (grid = 2r+1 x 2r+1 pixels)</_long>
+				<default>4</default>
+				<min>2</min>
+				<max>8</max>
+			</option>
+
+			<option name="picker_cell_size" type="int">
+				<_short>Loupe Cell Size</_short>
+				<_long>Size of each magnified pixel cell in the loupe (pixels)</_long>
+				<default>14</default>
+				<min>8</min>
+				<max>24</max>
+			</option>
+		</group>
+	</plugin>
+</wayfire>
