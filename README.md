@@ -1,4 +1,5 @@
-# screen-tools
+# Wayfire Screen-Tools
+
 
 A [Wayfire](https://github.com/WayfireWM/wayfire) compositor plugin providing crosshair guides, pixel measurement, and a color picker with magnifying loupe. Based on the [crosshair](https://github.com/WayfireWM/wayfire-plugins-extra) plugin by Scott Moreau.
 
@@ -21,8 +22,8 @@ A [Wayfire](https://github.com/WayfireWM/wayfire) compositor plugin providing cr
 | Toggle guides | `Ctrl + F1` |
 | Cancel | `Escape` |
 | Freeze crosshair | `Ctrl + LMB` |
-| Measure | `Super + LMB` |
-| Pick color | `Super + RMB` |
+| Toggle Measurement (start, stop, erase) | `Super + LMB` |
+| Toggle Pick color (copy color on exit) | `Super + RMB` |
 
 All bindings are configurable via `wayfire.ini` or Wayfire Config Manager (WCM).
 
@@ -74,6 +75,14 @@ picker_cell_size = 14
 - Wayfire 0.11+
 - `wl-copy` (from `wl-clipboard`) for clipboard support
 
+## Disclaimer
+
+This project was created with AI assistance. The code has not been thoroughly reviewed. Verify its correctness and suitability before use. 
+
 ## License
 
 MIT
+
+## Screencast
+
+![Screenshot of the plugin at work](assets/screencast.gif)
