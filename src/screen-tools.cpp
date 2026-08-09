@@ -66,15 +66,15 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
     wf::geometry_t geometry[2];
     bool is_active = false;
     bool is_frozen = false;
-    wf::point_t frozen_position{0, 0};
+    wf::pointf_t frozen_position{0, 0};
 
     OpenGL::program_t program;
 
     // Measurement state
     measure_state_t measure_state = MEASURE_IDLE;
-    wf::point_t measure_point_a{0, 0};
-    wf::point_t measure_point_b{0, 0};
-    wf::point_t last_measure_b{-1, -1};
+    wf::pointf_t measure_point_a{0, 0};
+    wf::pointf_t measure_point_b{0, 0};
+    wf::pointf_t last_measure_b{-1, -1};
     wf::geometry_t measure_rect_geom[4]; // top, bottom, left, right outline rects
     wf::geometry_t measure_label_geom{0, 0, 0, 0};
 
@@ -162,8 +162,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
 
         if (is_frozen)
         {
-            auto oc = output->get_cursor_position();
-            frozen_position = wf::point_t{(int)oc.x, (int)oc.y};
+            frozen_position = output->get_cursor_position();
         }
 
         output->render->damage(geometry[0]);
@@ -187,8 +186,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
             output->render->damage(geometry[1]);
         }
 
-        auto oc = output->get_cursor_position();
-        auto click = wf::point_t{(int)oc.x, (int)oc.y};
+        auto click = output->get_cursor_position();
 
         switch (measure_state)
         {
@@ -350,12 +348,12 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
 
     void compute_measure_rect()
     {
-        int x1 = std::min(measure_point_a.x, measure_point_b.x);
-        int y1 = std::min(measure_point_a.y, measure_point_b.y);
-        int x2 = std::max(measure_point_a.x, measure_point_b.x);
-        int y2 = std::max(measure_point_a.y, measure_point_b.y);
+        double x1 = std::min(measure_point_a.x, measure_point_b.x);
+        double y1 = std::min(measure_point_a.y, measure_point_b.y);
+        double x2 = std::max(measure_point_a.x, measure_point_b.x);
+        double y2 = std::max(measure_point_a.y, measure_point_b.y);
 
-        int lw = std::max(1, (int)line_width);
+        double lw = std::max(1.0, (double)line_width);
 
         // top edge
         measure_rect_geom[0] = {x1, y1, x2 - x1 + lw, lw};
@@ -369,11 +367,11 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
 
     void render_measure_label()
     {
-        int w = std::abs(measure_point_b.x - measure_point_a.x);
-        int h = std::abs(measure_point_b.y - measure_point_a.y);
+        long w = std::lround(std::abs(measure_point_b.x - measure_point_a.x));
+        long h = std::lround(std::abs(measure_point_b.y - measure_point_a.y));
 
         char text[64];
-        std::snprintf(text, sizeof(text), "%d x %d", w, h);
+        std::snprintf(text, sizeof(text), "%ld x %ld", w, h);
 
         int font_size = measure_font_size;
         int padding   = 6;
@@ -437,12 +435,12 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         measure_tex = wf::owned_texture_t{measure_surface};
 
         // Position label centered below the rectangle, 8px gap
-        int rx1 = std::min(measure_point_a.x, measure_point_b.x);
-        int ry2 = std::max(measure_point_a.y, measure_point_b.y);
-        int rx2 = std::max(measure_point_a.x, measure_point_b.x);
+        double rx1 = std::min(measure_point_a.x, measure_point_b.x);
+        double ry2 = std::max(measure_point_a.y, measure_point_b.y);
+        double rx2 = std::max(measure_point_a.x, measure_point_b.x);
 
-        int label_x = rx1 + (rx2 - rx1) / 2 - surf_w / 2;
-        int label_y = ry2 + 8;
+        double label_x = rx1 + (rx2 - rx1) / 2.0 - surf_w / 2.0;
+        double label_y = ry2 + 8;
 
         // Clamp to output bounds
         auto og = output->get_relative_geometry();
@@ -461,7 +459,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
             label_y = ry2 - surf_h - 8; // flip above
         }
 
-        measure_label_geom = {label_x, label_y, surf_w, surf_h};
+        measure_label_geom = {label_x, label_y, (double)surf_w, (double)surf_h};
     }
 
     void damage_measure()
@@ -637,7 +635,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         picker_tex = wf::owned_texture_t{picker_surface};
     }
 
-    void compute_loupe_position(wf::point_t cursor)
+    void compute_loupe_position(wf::pointf_t cursor)
     {
         int radius = picker_loupe_radius;
         int cell   = picker_cell_size;
@@ -649,10 +647,10 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         int surf_h = grid_px + 4 + 28; // approximate label height
 
         auto og = output->get_relative_geometry();
-        int offset = 20;
+        double offset = 20;
 
-        int lx = cursor.x + offset;
-        int ly = cursor.y - surf_h / 2;
+        double lx = cursor.x + offset;
+        double ly = cursor.y - surf_h / 2.0;
 
         // Flip left if too close to right edge
         if (lx + surf_w > og.x + og.width)
@@ -671,7 +669,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
             ly = og.y + og.height - surf_h;
         }
 
-        loupe_geom = {lx, ly, surf_w, surf_h};
+        loupe_geom = {lx, ly, (double)surf_w, (double)surf_h};
     }
 
     void cleanup_picker()
@@ -711,7 +709,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
 
         if (is_frozen)
         {
-            cursor_pos = wf::pointf_t{(double)frozen_position.x, (double)frozen_position.y};
+            cursor_pos = frozen_position;
         }
         else
         {
@@ -719,7 +717,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         }
 
         auto og = output->get_relative_geometry();
-        float half_width = line_width * 0.5;
+        double half_width = line_width * 0.5;
 
         /* Damage last frame geometry to clear it */
         output->render->damage(geometry[0]);
@@ -728,17 +726,17 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         /* All geometry is in logical (output-local) coordinates.
          * The render pipeline handles scaling to physical pixels internally. */
         geometry[0] = wf::geometry_t{
-            int(cursor_pos.x - half_width),
+            cursor_pos.x - half_width,
             og.y,
-            (int)line_width,
+            (double)line_width,
             og.height
         };
 
         geometry[1] = wf::geometry_t{
             og.x,
-            int(cursor_pos.y - half_width),
+            cursor_pos.y - half_width,
             og.width,
-            (int)line_width
+            (double)line_width
         };
 
         output->render->damage(geometry[0]);
@@ -747,7 +745,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         // Update measurement if actively tracking cursor
         if (measure_state == MEASURE_ACTIVE)
         {
-            auto cur_b = wf::point_t{(int)cursor_pos.x, (int)cursor_pos.y};
+            auto cur_b = cursor_pos;
             if (cur_b.x != last_measure_b.x || cur_b.y != last_measure_b.y)
             {
                 damage_measure(); // damage old position
@@ -762,13 +760,11 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         // Update picker loupe position
         if (picker_active)
         {
-            auto cursor = wf::point_t{(int)cursor_pos.x, (int)cursor_pos.y};
-
             // Damage old loupe position
             output->render->damage(prev_loupe_geom);
             output->render->damage(loupe_geom);
 
-            compute_loupe_position(cursor);
+            compute_loupe_position(cursor_pos);
             picker_needs_read = true;
 
             // Damage new loupe position
@@ -780,8 +776,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
     wf::effect_hook_t post_hook = [=] ()
     {
         auto target_fb = output->render->get_target_framebuffer();
-        auto gc = wf::get_core().get_cursor_position();
-        wf::point_t coords;
+        wf::pointf_t coords;
 
         if (is_frozen)
         {
@@ -789,7 +784,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
         }
         else
         {
-            coords = wf::point_t{(int)gc.x, (int)gc.y};
+            coords = wf::get_core().get_cursor_position();
         }
 
         // Only render if cursor is on this output (or if frozen)
@@ -798,7 +793,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
             return;
         }
 
-        wf::region_t region;
+        wf::regionf_t region;
         region |= geometry[0];
         region |= geometry[1];
         /* Note: we intentionally do NOT intersect with get_swap_damage() here.
@@ -845,7 +840,7 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
                 ma
             };
 
-            wf::region_t measure_region;
+            wf::regionf_t measure_region;
             for (int i = 0; i < 4; i++)
             {
                 measure_region |= measure_rect_geom[i];
@@ -868,10 +863,13 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
             int radius = picker_loupe_radius;
             int grid   = 2 * radius + 1;
 
-            // Use output-local cursor position (not global coords)
+            // Use output-local cursor position (not global coords).
+            // Anchor the grid on the logical pixel the cursor sits in, so the
+            // sampled cells line up with pixel boundaries rather than the
+            // sub-pixel cursor position.
             auto local_cursor = output->get_cursor_position();
-            int local_x = (int)local_cursor.x;
-            int local_y = (int)local_cursor.y;
+            double local_x = std::floor(local_cursor.x);
+            double local_y = std::floor(local_cursor.y);
 
             // Read pixels from framebuffer using custom_gles_subpass
             pass->custom_gles_subpass([&]
@@ -882,7 +880,12 @@ class wayfire_screen_tools : public wf::per_output_plugin_instance_t
 
                 // Convert output-local logical coords to physical framebuffer coords
                 // using framebuffer_box_from_geometry_box (handles scale + transform)
-                wlr_box cursor_box = {local_x - radius, local_y - radius, grid, grid};
+                wf::geometry_t cursor_box = {
+                    local_x - radius,
+                    local_y - radius,
+                    (double)grid,
+                    (double)grid
+                };
                 auto fb_box = target_fb.framebuffer_box_from_geometry_box(cursor_box);
 
                 // Clamp to framebuffer bounds
